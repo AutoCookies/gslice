@@ -1,0 +1,6 @@
+bin/
+var/
+*.db
+native/fakecuda/libfakecuda.so
+native/interceptor/libgpuslice.so
+examples/target_app
