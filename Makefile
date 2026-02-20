@@ -1,7 +1,7 @@
 GO ?= go
 PREFIX ?= /usr/local
 
-.PHONY: build build-go build-native build-example build-interceptor test test-native test-integration run-server demo demo-fake clean lint install
+.PHONY: build build-go build-native build-example build-interceptor test test-native test-integration run-server demo demo-fake bench clean lint install
 
 build: build-go build-native
 
@@ -50,6 +50,9 @@ demo: build
 
 demo-fake: build-native
 	@FAKECUDA_TOTAL_MEM=134217728 ALLOC_BYTES=67108864 ITERATIONS=5 ./native/examples/target_app
+
+bench: build-native
+	$(MAKE) -C bench run
 
 install: build
 	install -d $(PREFIX)/bin $(PREFIX)/lib/gpuslice $(PREFIX)/share/gpuslice
