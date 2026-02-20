@@ -1,0 +1,50 @@
+{
+  "baseline": {
+    "name": "baseline_fakecuda",
+    "rounds": 10,
+    "iterations": 200,
+    "bytes": 4096,
+    "mean_ns_op": 33692.2985,
+    "p50_ns_op": 33059.73,
+    "p95_ns_op": 34680.49,
+    "total_sec": 0.067384597,
+    "allocs_per_sec": 29680.373394531096
+  },
+  "with_slicer": {
+    "name": "with_slicer",
+    "rounds": 10,
+    "iterations": 200,
+    "bytes": 4096,
+    "mean_ns_op": 2635048.504,
+    "p50_ns_op": 2584821.895,
+    "p95_ns_op": 2813650.25,
+    "total_sec": 5.2700970080000005,
+    "allocs_per_sec": 379.49965569210633
+  },
+  "ipc": {
+    "sequential": {
+      "mean_us": 254.9855,
+      "n": 10000,
+      "name": "ipc_seq",
+      "p50_us": 210,
+      "p95_us": 325,
+      "p99_us": 515
+    },
+    "concurrent": {
+      "mean_us": 6006.5542,
+      "n": 10000,
+      "name": "ipc_con",
+      "p50_us": 5538,
+      "p95_us": 9531,
+      "p99_us": 17327
+    }
+  },
+  "stress": {
+    "processes": 10,
+    "iterations_each": 100,
+    "total_sec": 0.044830039,
+    "success": 10,
+    "denied": 10,
+    "recovery_ok": true
+  }
+}
