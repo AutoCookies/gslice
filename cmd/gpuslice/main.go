@@ -94,7 +94,7 @@ func main() {
 		svc := application.NewService(st, application.RealClock{}, metrics.New(), logging.New())
 		ctx, cancel := context.WithTimeout(context.Background(), 24*time.Hour)
 		defer cancel()
-		check(svc.RunCommand(ctx, os.Args[2], cfg.SocketPath, os.Args[3], os.Args[4], os.Args[5:]))
+		check(svc.RunCommand(ctx, os.Args[2], cfg.IPCSocketPath, os.Args[3], os.Args[4], os.Args[5:]))
 	default:
 		usage()
 		os.Exit(1)

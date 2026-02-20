@@ -50,13 +50,13 @@ Expected behavior: two allocations succeed (2 MiB total), third fails with memor
 On NVIDIA systems, `libgpuslice.so` can resolve real CUDA symbols via `dlsym(RTLD_NEXT)` while keeping the same IPC quota checks.
 
 ## IPC protocol
-JSON over Unix domain socket (`GPUSLICE_SOCKET`):
+JSON over Unix domain socket (`GPUSLICE_IPC_SOCK`):
 - request: `{"pid":123,"session_id":"...","op":"reserve|release","bytes":1048576}` + newline
 - response: `{"allowed":true|false,"used_bytes":...,"remaining_bytes":...,"error":"..."}`
 
 ## Environment
 - `GPUSLICE_HTTP_ADDR` default `:8080`
-- `GPUSLICE_SOCKET` default `/tmp/gpuslice.sock`
+- `GPUSLICE_IPC_SOCK` default `/tmp/gpusliced.sock`
 - `GPUSLICE_DB_PATH` default `./gpuslice.db`
 - `GPUSLICE_DEFAULT_TTL` default `10m`
 - `GPUSLICE_DEFAULT_VRAM` default `67108864`

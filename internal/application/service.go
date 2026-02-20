@@ -67,7 +67,7 @@ func (s *Service) ReleaseBytes(ctx context.Context, sessionID string, bytes uint
 
 func buildEnv(base []string, sessionID, sock, preload, libPath string) []string {
 	env := append([]string{}, base...)
-	env = append(env, "GPUSLICE_SESSION="+sessionID, "GPUSLICE_SOCKET="+sock)
+	env = append(env, "GPUSLICE_SESSION="+sessionID, "GPUSLICE_IPC_SOCK="+sock)
 	if preload != "" {
 		env = append(env, "LD_PRELOAD="+preload)
 	}

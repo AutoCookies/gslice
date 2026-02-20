@@ -27,7 +27,7 @@ func main() {
 	defer st.Close()
 	metric := metrics.New()
 	svc := application.NewService(st, application.RealClock{}, metric, logger)
-	uds := ipc.NewUDSServer(cfg.SocketPath, svc)
+	uds := ipc.NewUDSServer(cfg.IPCSocketPath, svc, logger)
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
 	if err := uds.Start(ctx); err != nil {
@@ -37,7 +37,7 @@ func main() {
 	h := httpadapter.NewHandlers(svc)
 	server := &http.Server{Addr: cfg.HTTPAddr, Handler: httpadapter.NewRouter(h, metric)}
 	go func() { <-ctx.Done(); _ = server.Shutdown(context.Background()) }()
-	logger.Info("server_start", "http_addr", cfg.HTTPAddr, "socket", cfg.SocketPath)
+	logger.Info("server_start", "http_addr", cfg.HTTPAddr, "socket", cfg.IPCSocketPath)
 	if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		panic(err)
 	}
