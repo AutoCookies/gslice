@@ -1,11 +1,13 @@
 #ifndef GPUSLICE_H
 #define GPUSLICE_H
+
 #include <stddef.h>
 
-typedef enum {
-  cudaSuccess = 0,
-  cudaErrorMemoryAllocation = 2,
-  cudaErrorInvalidValue = 11
-} cudaError_t;
+#define GPUSLICE_SUCCESS 0
+#define GPUSLICE_ERROR_OUT_OF_MEMORY 2
+#define GPUSLICE_ERROR_INVALID_VALUE 3
+
+int cudaMalloc(void **ptr, size_t size);
+int cudaFree(void *ptr);
 
 #endif
