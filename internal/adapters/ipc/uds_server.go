@@ -50,6 +50,9 @@ func (u *UDSServer) acceptLoop(ctx context.Context) {
 	for {
 		conn, err := u.ln.Accept()
 		if err != nil {
+			if errors.Is(err, net.ErrClosed) {
+				return
+			}
 			select {
 			case <-ctx.Done():
 				return

@@ -2,5 +2,7 @@ bin/
 var/
 *.db
 native/fakecuda/libfakecuda.so
+native/examples/target_app
+native/examples/fakecuda_unit_test
 native/interceptor/libgpuslice.so
 examples/target_app

@@ -1,6 +1,6 @@
 CC ?= cc
 CFLAGS ?= -O2 -fPIC -Wall -Wextra -Werror
-LDFLAGS ?= -shared
+LDFLAGS ?= -shared -pthread
 
 all: libfakecuda.so
 
