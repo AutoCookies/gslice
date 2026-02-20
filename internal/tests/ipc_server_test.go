@@ -23,7 +23,7 @@ func TestIPCServerRequestHandling(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer st.Close()
-	svc := application.NewService(st, application.RealClock{}, metrics.New(), logging.New())
+	svc := application.NewService(st, application.RealClock{}, metrics.New(false), logging.New())
 	session, err := svc.AllocateSession(context.Background(), 100, time.Minute)
 	if err != nil {
 		t.Fatal(err)
@@ -31,7 +31,7 @@ func TestIPCServerRequestHandling(t *testing.T) {
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	server := ipc.NewUDSServer(sockPath, svc, logging.New())
+	server := ipc.NewUDSServer(sockPath, svc, logging.New(), "", false, 1000)
 	if err := server.Start(ctx); err != nil {
 		t.Fatal(err)
 	}

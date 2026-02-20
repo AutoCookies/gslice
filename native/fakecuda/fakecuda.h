@@ -9,5 +9,7 @@
 
 int cudaMalloc(void **ptr, size_t size);
 int cudaFree(void *ptr);
+int cudaMallocManaged(void **ptr, size_t size, unsigned int flags);
+int cudaMallocPitch(void **ptr, size_t *pitch, size_t width, size_t height);
 
 #endif

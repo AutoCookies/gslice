@@ -27,9 +27,14 @@ func (s *Service) ReserveQuota(ctx context.Context, sessionID string, bytes uint
 		}
 		return QuotaStatus{}, NewCodedError(CodeInternal, "internal error")
 	}
-	if err := s.store.UpdateUsedBytes(ctx, sessionID, used); err != nil {
+	session.UsedBytes = used
+	session.UpdatedAt = s.clock.Now()
+	session.State = domain.SessionActive
+	if err := s.store.UpdateSession(ctx, session); err != nil {
 		return QuotaStatus{}, wrapDomainErr(err)
 	}
+	s.metrics.ObserveAllocationResult(true)
+	s.metrics.SetSessionUsage(sessionID, float64(used))
 	return QuotaStatus{UsedBytes: used, LimitBytes: session.VRAMLimitBytes, RemainingBytes: session.VRAMLimitBytes - used}, nil
 }
 

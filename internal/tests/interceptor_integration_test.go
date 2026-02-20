@@ -161,10 +161,10 @@ func startServer(t *testing.T) (*application.Service, string, func()) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	svc := application.NewService(st, application.RealClock{}, metrics.New(), logging.New())
+	svc := application.NewService(st, application.RealClock{}, metrics.New(false), logging.New())
 	sock := filepath.Join(dir, "ipc.sock")
 	ctx, cancel := context.WithCancel(context.Background())
-	server := ipc.NewUDSServer(sock, svc, logging.New())
+	server := ipc.NewUDSServer(sock, svc, logging.New(), "", false, 1000)
 	if err := server.Start(ctx); err != nil {
 		t.Fatal(err)
 	}

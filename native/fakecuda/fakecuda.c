@@ -116,3 +116,16 @@ int cudaFree(void *ptr) {
   (void)pthread_mutex_unlock(&g_lock);
   return FAKECUDA_ERROR_INVALID_VALUE;
 }
+
+int cudaMallocManaged(void **ptr, size_t size, unsigned int flags) {
+  (void)flags;
+  return cudaMalloc(ptr, size);
+}
+
+int cudaMallocPitch(void **ptr, size_t *pitch, size_t width, size_t height) {
+  if (pitch == NULL) {
+    return FAKECUDA_ERROR_INVALID_VALUE;
+  }
+  *pitch = width;
+  return cudaMalloc(ptr, width * height);
+}

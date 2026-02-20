@@ -1,47 +1,55 @@
-# GPU Slice Quota Manager (MVP)
+# GPU Slice Quota Manager v1.0.0
 
-## Build
+## Build and test
 ```bash
 make build
-```
-
-## Test
-```bash
 make test
 ```
 
-## End-to-end demo with interceptor (Phase 4)
+## Run server
+```bash
+GPUSLICE_IPC_TOKEN=change-me GPUSLICE_IPC_TOKEN_REQUIRED=1 make run-server
+```
+
+## End-to-end demo (LD_PRELOAD + quota enforcement + metrics)
 ```bash
 make demo
 ```
-This runs `gpusliced`, allocates a session, then runs `native/examples/target_app` with:
-- `LD_PRELOAD=native/interceptor/libgpuslice.so`
-- `GPUSLICE_SESSION=<session_id>`
-- `GPUSLICE_IPC_SOCK=<uds_path>`
 
-Expected pattern:
-- `ALLOC_OK iteration 0`
-- `ALLOC_OK iteration 1`
-- `ALLOC_FAIL at iteration 2 code=2`
-
-## Fake CUDA-only demo (no interceptor)
+## CLI production run helper
 ```bash
-make demo-fake
+# gpuslice run <limit_bytes> <ttl_seconds> <preload_lib> <ld_library_path> <command...>
+GPUSLICE_IPC_TOKEN=change-me ./bin/gpuslice run 134217728 120 \
+  $(pwd)/native/interceptor/libgpuslice.so \
+  $(pwd)/native/fakecuda \
+  ./native/examples/target_app
 ```
+This allocates a session, runs the command under `LD_PRELOAD`, and releases the session on exit (best effort).
 
-## Native layout
-- `native/fakecuda`: `libfakecuda.so`
-- `native/interceptor`: `libgpuslice.so`
-- `native/examples/target_app`: app linked against `libfakecuda.so`
-- `native/examples/fakecuda_unit_test`: C unit-style test binary
+## Security and auth
+- IPC token is passed as `GPUSLICE_IPC_TOKEN` and validated server-side.
+- Set `GPUSLICE_IPC_TOKEN_REQUIRED=1` in production.
 
-## Session ID constraint in interceptor
-To keep JSON handling minimal and deterministic in C, interceptor-enforced session IDs accept only:
-- `[A-Za-z0-9_-]`
+## Recovery hardening
+- Session TTL default: 15m (`GPUSLICE_DEFAULT_TTL`).
+- Background recovery loop (`GPUSLICE_RECOVERY_INTERVAL`, default 2s):
+  - expires stale sessions and zeros used bytes,
+  - reconciles orphaned allocations for dead PIDs using `/proc/<pid>`.
 
-If `GPUSLICE_SESSION` is present but contains other characters, allocations fail closed.
+## Interceptor constraints
+- `GPUSLICE_SESSION` must match `[A-Za-z0-9_-]` for enforcement mode.
+- Missing session -> interceptor passes through to underlying CUDA calls.
 
-## Server run (control plane)
-```bash
-make run-server
-```
+## Metrics
+`/metrics` includes:
+- `gpuslice_sessions_active`
+- `gpuslice_used_bytes_total`
+- `gpuslice_alloc_events_total`
+- `gpuslice_denied_alloc_total`
+- `gpuslice_recovered_bytes_total`
+
+Enable per-session debug metric labels only with `GPUSLICE_METRICS_DEBUG=1`.
+
+## Packaging
+- `make install PREFIX=/usr/local`
+- Example systemd unit: `packaging/gpusliced.service`

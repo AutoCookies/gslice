@@ -25,11 +25,12 @@ func main() {
 		panic(err)
 	}
 	defer st.Close()
-	metric := metrics.New()
+	metric := metrics.New(cfg.MetricsDebug)
 	svc := application.NewService(st, application.RealClock{}, metric, logger)
-	uds := ipc.NewUDSServer(cfg.IPCSocketPath, svc, logger)
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
+	svc.StartBackground(ctx, cfg.RecoveryInterval)
+	uds := ipc.NewUDSServer(cfg.IPCSocketPath, svc, logger, cfg.IPCToken, cfg.RequireIPCToken, cfg.IPCRatePerSecond)
 	if err := uds.Start(ctx); err != nil {
 		panic(err)
 	}

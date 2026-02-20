@@ -11,19 +11,13 @@ const (
 	CodeQuotaExceeded = "ERR_QUOTA_EXCEEDED"
 	CodeBadRequest    = "ERR_BAD_REQUEST"
 	CodeInternal      = "ERR_INTERNAL"
+	CodeUnauthorized  = "ERR_UNAUTHORIZED"
 )
 
-type CodedError struct {
-	Code    string
-	Message string
-}
+type CodedError struct{ Code, Message string }
 
-func (e CodedError) Error() string { return e.Message }
-
-func NewCodedError(code, message string) error {
-	return CodedError{Code: code, Message: message}
-}
-
+func (e CodedError) Error() string             { return e.Message }
+func NewCodedError(code, message string) error { return CodedError{Code: code, Message: message} }
 func ErrorCode(err error) string {
 	var ce CodedError
 	if errors.As(err, &ce) {
@@ -35,6 +29,12 @@ func ErrorCode(err error) string {
 func wrapDomainErr(err error) error {
 	if errors.Is(err, domain.ErrSessionNotFound) {
 		return NewCodedError(CodeNotFound, "session not found")
+	}
+	if errors.Is(err, domain.ErrSessionExpired) {
+		return NewCodedError(CodeExpired, "session expired")
+	}
+	if errors.Is(err, domain.ErrUnauthorized) {
+		return NewCodedError(CodeUnauthorized, "unauthorized")
 	}
 	return NewCodedError(CodeInternal, "internal error")
 }

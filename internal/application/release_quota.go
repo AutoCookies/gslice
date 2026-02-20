@@ -13,9 +13,11 @@ func (s *Service) ReleaseQuota(ctx context.Context, sessionID string, bytes uint
 	if session.IsExpired(s.clock.Now()) {
 		return QuotaStatus{}, NewCodedError(CodeExpired, "session expired")
 	}
-	used := domain.Release(session.UsedBytes, bytes)
-	if err := s.store.UpdateUsedBytes(ctx, sessionID, used); err != nil {
+	session.UsedBytes = domain.Release(session.UsedBytes, bytes)
+	session.UpdatedAt = s.clock.Now()
+	if err := s.store.UpdateSession(ctx, session); err != nil {
 		return QuotaStatus{}, wrapDomainErr(err)
 	}
-	return QuotaStatus{UsedBytes: used, LimitBytes: session.VRAMLimitBytes, RemainingBytes: session.VRAMLimitBytes - used}, nil
+	s.metrics.SetSessionUsage(sessionID, float64(session.UsedBytes))
+	return QuotaStatus{UsedBytes: session.UsedBytes, LimitBytes: session.VRAMLimitBytes, RemainingBytes: session.VRAMLimitBytes - session.UsedBytes}, nil
 }

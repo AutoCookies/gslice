@@ -8,6 +8,7 @@ const (
 	CodeInternal           = "ERR_INTERNAL"
 	CodeUnsupportedVersion = "ERR_UNSUPPORTED_VERSION"
 	CodeBadOp              = "ERR_BAD_OP"
+	CodeUnauthorized       = "ERR_UNAUTHORIZED"
 )
 
 type ErrorPayload struct {

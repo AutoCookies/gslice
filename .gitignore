@@ -6,3 +6,5 @@ native/examples/target_app
 native/examples/fakecuda_unit_test
 native/interceptor/libgpuslice.so
 examples/target_app
+
+native/examples/crash_alloc

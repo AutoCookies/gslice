@@ -1,0 +1,14 @@
+[Unit]
+Description=GPU Slice Quota Manager
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/gpusliced
+Restart=on-failure
+Environment=GPUSLICE_DB_PATH=/var/lib/gpuslice/state.json
+Environment=GPUSLICE_IPC_SOCK=/run/gpusliced.sock
+Environment=GPUSLICE_IPC_TOKEN_REQUIRED=1
+EnvironmentFile=-/etc/default/gpusliced
+
+[Install]
+WantedBy=multi-user.target

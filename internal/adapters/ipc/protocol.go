@@ -18,6 +18,8 @@ type Request struct {
 	SessionID string `json:"session_id"`
 	PID       int    `json:"pid"`
 	Bytes     int64  `json:"bytes"`
+	Token     string `json:"token,omitempty"`
+	PtrID     string `json:"ptr_id,omitempty"`
 }
 
 type Response struct {
@@ -33,7 +35,8 @@ func ValidateRequest(req Request) *ErrorPayload {
 	if req.V != ProtocolVersion {
 		return &ErrorPayload{Code: CodeUnsupportedVersion, Message: "unsupported protocol version"}
 	}
-	if req.Op != "reserve" && req.Op != "release" && req.Op != "status" {
+	validOp := req.Op == "reserve" || req.Op == "release" || req.Op == "status" || req.Op == "alloc_register" || req.Op == "alloc_unregister"
+	if !validOp {
 		return &ErrorPayload{Code: CodeBadOp, Message: "unsupported operation"}
 	}
 	if req.SessionID == "" {
@@ -44,6 +47,9 @@ func ValidateRequest(req Request) *ErrorPayload {
 	}
 	if req.Bytes < 0 {
 		return &ErrorPayload{Code: CodeBadRequest, Message: "bytes must be >= 0"}
+	}
+	if (req.Op == "alloc_register" || req.Op == "alloc_unregister") && req.PtrID == "" {
+		return &ErrorPayload{Code: CodeBadRequest, Message: "ptr_id required"}
 	}
 	return nil
 }
@@ -64,7 +70,6 @@ func EncodeFrame(w io.Writer, v any) error {
 	_, err = w.Write(body)
 	return err
 }
-
 func DecodeFrame(r io.Reader, out any) error {
 	var hdr [4]byte
 	if _, err := io.ReadFull(r, hdr[:]); err != nil {
