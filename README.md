@@ -1,4 +1,16 @@
-# GPU Slice v1.0.0
+<h1>GPU Slice</h1>
+
+<div align="center">
+  <img src="assets/logo.png" alt="GPU Slice Logo" width="160"/>
+
+  <p>
+    <img src="https://img.shields.io/badge/Go-1.22-00ADD8?style=flat&logo=go&logoColor=white" alt="Go"/>
+    <img src="https://img.shields.io/badge/C-Native-A8B9CC?style=flat&logo=c&logoColor=white" alt="C"/>
+    <img src="https://img.shields.io/badge/Linux-only-FCC624?style=flat&logo=linux&logoColor=black" alt="Linux"/>
+    <a href="https://discord.gg/nnkfW83n"><img src="https://img.shields.io/badge/Discord-Community-5865F2?style=flat&logo=discord&logoColor=white" alt="Discord"/></a>
+    <img src="https://img.shields.io/badge/License-NC--Copyleft-red?style=flat" alt="License"/>
+  </p>
+</div>
 
 ## Overview
 GPU Slice enforces **per-session GPU memory quotas** for CUDA-style alloc/free APIs on Linux.
